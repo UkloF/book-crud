@@ -97,6 +97,8 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
 1.TypeScript คือภาษาที่เอา JavaScript มาติดเกราะเพิ่มความเข้มงวดเรื่อง "ชนิดข้อมูล" (Static Typing) ช่วยให้เราตรวจเจอ bug ได้ตั้งแต่ตอนเขียนโค้ดก่อนที่จะรันโปรแกรมจริง
 
 Variable: การประกาศตัวแปรต้องระบุประเภทให้ชัดเจน เช่น string, number, boolean ทำให้เราไม่สามารถเผลอเอาตัวอักษรไปใส่ในตัวแปรที่เก็บตัวเลขได้
