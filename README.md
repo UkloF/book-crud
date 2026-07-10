@@ -134,7 +134,7 @@ Async / Await :
 3. สรุปคอนเซปต์การทำ CRUD API ด้วย NestJS
 NestJS คือ Framework สำหรับทำระบบหลังบ้าน (Backend) ที่มีโครงสร้างเป็นระเบียบมาก (Architecture) คอนเซปต์หลักของการทำ CRUD มีดังนี้:
 
-3.1 โครงสร้างการทำงาน 3 ทหารเสือ (Controller > Service > Repository):
+3.1 โครงสร้างการทำงาน (Controller > Service > Repository):
 
 Controller: คอยรับ Request จาก Postman ว่าผู้ใช้ยิง HTTP Method อะไรมา (@Get, @Post, @Put, @Delete)
 
