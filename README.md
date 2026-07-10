@@ -96,3 +96,60 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+1.TypeScript คือภาษาที่เอา JavaScript มาติดเกราะเพิ่มความเข้มงวดเรื่อง "ชนิดข้อมูล" (Static Typing) ช่วยให้เราตรวจเจอ bug ได้ตั้งแต่ตอนเขียนโค้ดก่อนที่จะรันโปรแกรมจริง
+
+	Variable: การประกาศตัวแปรต้องระบุประเภทให้ชัดเจน เช่น string, number, boolean ทำให้เราไม่สามารถเผลอเอาตัวอักษรไปใส่ในตัวแปรที่เก็บตัวเลขได้
+
+	ตัวอย่าง: let name: string = "Folk";
+
+	Function: สามารถกำหนดประเภทข้อมูลของ Parameters และ Return Type ได้ ทำให้รู้ทันทีว่าฟังก์ชันนี้ต้องการอะไรและจะคืนค่าอะไรกลับมา
+
+	ตัวอย่าง: function calculate(price: number): number { ... }
+
+	Class: เปรียบเสมือนแม่พิมพ์สำหรับสร้าง Object รองรับ OOP เต็มรูปแบบ มีทั้ง constructor, public, private 
+
+2. สรุปกลไกการทำงานของ Async / Await และ Promise
+	ในการเขียนเว็บ การดึงข้อมูลจากฐานข้อมูลหรือ API จะต้องใช้เวลารอ จึงต้องมีกลไกมารองรับการรอคอยนี้:
+
+	Promise : Object ที่เป็นตัวแทนของผลลัพธ์ของงานที่ยังทำไม่เสร็จในตอนนี้ แต่สัญญาว่าจะคืนผลลัพธ์มาให้ในอนาคต โดยจะมี 3 สถานะ:
+
+	Pending: ระบบกำลังดึงข้อมูล
+
+	Fulfilled (Resolved): ได้ข้อมูลกลับมาพร้อมใช้งาน
+
+	Rejected: เกิด Error
+
+	Async / Await :
+	เป็นรูปแบบการเขียน (Syntactic Sugar) ที่เอามาครอบ Promise ไว้ เพื่อให้เราเขียนโค้ดแบบรอคอย ให้ออกมาหน้าตาเหมือนโค้ดทำงานตามลำดับปกติ (Synchronous) โดย:
+
+	ใส่ async ไว้หน้าฟังก์ชัน เพื่อบอกว่าฟังก์ชันนี้มีการทำงานแบบไม่พร้อมกัน
+
+	ใส่ await ไว้หน้าคำสั่งที่ต้องรอ (เช่น await this.repository.save()) ระบบจะหยุดรอตรงบรรทัดนั้นจนกว่าจะทำงานเสร็จ แล้วค่อยขยับไปทำบรรทัดถัดไป
+
+3. สรุปคอนเซปต์การทำ CRUD API ด้วย NestJS
+NestJS คือ Framework สำหรับทำระบบหลังบ้าน (Backend) ที่มีโครงสร้างเป็นระเบียบมาก (Architecture) คอนเซปต์หลักของการทำ CRUD มีดังนี้:
+
+	1. โครงสร้างการทำงาน 3 ทหารเสือ (Controller > Service > Repository):
+
+	Controller: คอยรับ Request จาก Postman ว่าผู้ใช้ยิง HTTP Method อะไรมา (@Get, @Post, @Put, @Delete)
+
+	Service: เขียนโค้ด Business Logic ต่าง ๆ ไว้ที่นี่
+
+	Repository (ผ่าน TypeORM): เอาข้อมูลจาก Service ไปบันทึก, แก้ไข, ดึง, หรือลบ ออกจากตารางในฐานข้อมูล MySQL
+
+	2. การใช้ DTO และ Entity:
+
+	Entity (book.entity.ts): ตัวแทนของ "ตารางในฐานข้อมูล" ใช้ @Column() เพื่อกำหนดฟิลด์ต่าง ๆ 
+
+	DTO (create-book.dto.ts): ตัวแทนของ "กล่องรับพัสดุ" ใช้กรองและกำหนดสเปกข้อมูลที่ผู้ใช้ยิงเข้ามาจาก Postman ป้องกันคนส่งข้อมูลมั่ว ๆ เข้ามาในระบบ
+
+	3. แมปปิ้ง CRUD กับ HTTP Methods:
+
+	C (Create) ยิง POST: เพื่อเพิ่มข้อมูลใหม่
+
+	R (Read) ยิง GET: เพื่อดึงข้อมูลทั้งหมด หรือดึงเฉพาะ ID ที่ต้องการ
+
+	U (Update) ยิง PUT / PATCH: เพื่อแก้ไขข้อมูลเดิม
+
+	D (Delete) ยิง DELETE: เพื่อลบข้อมูลทิ้ง
