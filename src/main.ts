@@ -3,6 +3,10 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+  app.enableCors({
+    origin: '*', // เปิดรับทุกการเชื่อมต่อชั่วคราวเพื่อเทส
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  });
+  await app.listen(process.env.PORT ?? 3001);
 }
 bootstrap();
