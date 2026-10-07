@@ -1,45 +1,106 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm/dist';
-import { Repository } from 'typeorm';
-import { Book } from './entities/book.entity';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateBookDto } from './dto/create-book.dto';
+import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
-
 
 @Injectable()
 export class BooksService {
-  constructor(
-    @InjectRepository(Book)
-    private booksRepository: Repository<Book>,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(createBookDto: CreateBookDto) {
-    const book = await this.booksRepository.create(createBookDto);
-    const createBook = await this.booksRepository.insert(book);
-    return createBook;
+    return this.prisma.book.create({
+      data: {
+        title: createBookDto.title,
+        author: createBookDto.author,
+        ...(createBookDto.publishedAt && {
+          publishedAt: new Date(createBookDto.publishedAt),
+        }),
+        coverUrl: createBookDto.coverUrl ?? null,
+      },
+      include: {
+        reviews: true,
+      },
+    });
   }
 
-  findAll() {
-    return this.booksRepository.find();
+  async findAll() {
+    return this.prisma.book.findMany({
+      include: {
+        reviews: true,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return this.booksRepository.findOneBy({ id });
+  async findOne(id: number) {
+    const book = await this.prisma.book.findUnique({
+      where: { id },
+      include: {
+        reviews: true,
+      },
+    });
+
+    if (!book) {
+      throw new NotFoundException(`Book with ID ${id} not found`);
+    }
+
+    return book;
   }
 
   async update(id: number, updateBookDto: UpdateBookDto) {
-    const book = await this.booksRepository.findOneBy({ id });
-    if(!book){
-      throw new NotFoundException('Book not found');
-    }
-    
-    Object.assign(book, updateBookDto);
-    return await this.booksRepository.save(book);
+    await this.findOne(id);
+
+    return this.prisma.book.update({
+      where: { id },
+      data: {
+        ...(updateBookDto.title !== undefined && {
+          title: updateBookDto.title,
+        }),
+        ...(updateBookDto.author !== undefined && {
+          author: updateBookDto.author,
+        }),
+        ...(updateBookDto.publishedAt !== undefined && {
+          publishedAt: new Date(updateBookDto.publishedAt),
+        }),
+        ...(updateBookDto.coverUrl !== undefined && {
+          coverUrl: updateBookDto.coverUrl,
+        }),
+      },
+      include: {
+        reviews: true,
+      },
+    });
   }
 
   async remove(id: number) {
-    const deleteBook = await this.booksRepository.delete(id);
+    await this.findOne(id);
 
-    return deleteBook;
+    return this.prisma.book.delete({
+      where: { id },
+      include: {
+        reviews: true,
+      },
+    });
+  }
+
+  async addReview(bookId: number, createReviewDto: CreateReviewDto) {
+    await this.findOne(bookId);
+
+    const rating = Number(createReviewDto.rating);
+    if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+      throw new BadRequestException('Rating must be an integer between 1 and 5');
+    }
+
+    return this.prisma.review.create({
+      data: {
+        rating,
+        content: createReviewDto.content,
+        bookId,
+      },
+    });
   }
 }

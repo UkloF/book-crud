@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
+import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 
 @Controller('books')
@@ -27,8 +28,21 @@ export class BooksController {
     return this.booksService.update(+id, updateBookDto);
   }
 
+  @Patch(':id')
+  patch(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
+    return this.booksService.update(+id, updateBookDto);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.booksService.remove(+id);
+  }
+
+  @Post(':id/reviews')
+  addReview(
+    @Param('id') id: string,
+    @Body() createReviewDto: CreateReviewDto,
+  ) {
+    return this.booksService.addReview(+id, createReviewDto);
   }
 }
